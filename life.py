@@ -4,7 +4,7 @@ import math
 
 pygame.init()
 
-WIDTH, HEIGHT = 500, 500
+WIDTH, HEIGHT = 800, 800
 
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Artificial Life")
@@ -20,7 +20,7 @@ def particle(x, y, color):
     return {"x": x, "y": y, "vx": 0, "vy": 0, "color": color}
 
 def random_pos():
-    return random.randint(50, 450)
+    return random.randint(50, 750)
 
 def create(number, color):
     group = []
@@ -38,20 +38,26 @@ def rule(particles1, particles2, g):
             dy = a["y"]-b["y"]
             d = math.sqrt(dx*dx + dy*dy)
 
-            if d > 0:
+            if d > 0 and d < 80:
                 F = g * 1/d
                 fx += (F * dx)
                 fy += (F * dy)
         
-        a["vx"] = a["vx"] + fx
-        a["vy"] = a["vy"] + fy
+        a["vx"] = (a["vx"] + fx) * 0.5
+        a["vy"] = (a["vy"] + fy) * 0.5
         a["x"] += a["vx"]
         a["y"] += a["vy"]
 
+        if a["x"] <= 0 or a["x"] >=  800:
+            a["vx"] *= -1
+        if a["y"] <= 0 or a["y"] >=  800:
+            a["vy"] *= -1
+
+yellow = create(300, (255, 255, 0))
+red = create(300, (255, 0, 0))
+green = create(200, (0, 255, 0))
 
 running = True
-
-yellow = create(3, (255, 255, 0))
 
 while running:
     for event in pygame.event.get():
@@ -59,14 +65,17 @@ while running:
             running = False
     
     win.fill((0, 0, 0))
-    rule(yellow, yellow, -1)
-    for particle in particles:
-        draw(int(particle['x']), int(particle['y']), particle['color'], 2)
 
-    
+    rule(red, red, -0.1)
+    rule(yellow, red, 0.15)
+    rule(green, green, -0.7)
+    rule(green, red, -0.2)
+    rule(red, green, -0.1)
+
+    for particle in particles:
+        draw(int(particle['x']), int(particle['y']), particle['color'], 4)
+
     clock.tick(60)
     pygame.display.update()
 
 pygame.quit()
-
-    
