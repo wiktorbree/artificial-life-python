@@ -38,7 +38,7 @@ def rule(particles1, particles2, g):
             dy = a["y"]-b["y"]
             d = math.sqrt(dx*dx + dy*dy)
 
-            if d > 0 and d < 80:
+            if 0 < d < 80:
                 F = g * 1/d
                 fx += (F * dx)
                 fy += (F * dy)
